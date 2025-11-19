@@ -1,34 +1,25 @@
-name: Deploy React App to GitHub Pages
-
-on:
-  push:
-    branches: ["main"]
-
-jobs:
-  build-deploy:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: react-host
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Build the project
-        run: npm run build
-
-      - name: Upload to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./react-host/dist
-          publish_branch: gh-pages
+{
+  "name": "react-host",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.1"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-react": "^4.0.0",
+    "tailwindcss": "^3.3.3",
+    "postcss": "^8.4.25",
+    "autoprefixer": "^10.4.14",
+    "gh-pages": "^5.0.0"
+  }
+}
