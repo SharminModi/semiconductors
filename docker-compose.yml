@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+
+  backend:
+    build: ./backend-api
+    container_name: dts-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - /mnt/data:/mnt/data
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  react_host:
+    build:
+      context: ./react-host
+      dockerfile: Dockerfile
+    container_name: dts-react
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  angular_remote:
+    build:
+      context: ./angular-admin
+      dockerfile: Dockerfile
+    container_name: dts-angular
+    ports:
+      - "4201:80"
+    depends_on:
+      - backend
