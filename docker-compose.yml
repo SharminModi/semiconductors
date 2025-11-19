@@ -1,33 +1,34 @@
-version: '3.8'
+name: Deploy React App to GitHub Pages
 
-services:
+on:
+  push:
+    branches: ["main"]
 
-  backend:
-    build: ./backend-api
-    container_name: dts-backend
-    ports:
-      - "8000:8000"
-    volumes:
-      - /mnt/data:/mnt/data
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: react-host
 
-  react_host:
-    build:
-      context: ./react-host
-      dockerfile: Dockerfile
-    container_name: dts-react
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  angular_remote:
-    build:
-      context: ./angular-admin
-      dockerfile: Dockerfile
-    container_name: dts-angular
-    ports:
-      - "4201:80"
-    depends_on:
-      - backend
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Upload to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./react-host/dist
+          publish_branch: gh-pages
